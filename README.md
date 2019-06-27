@@ -1,12 +1,10 @@
-##  Linux Server Configuration - Blacksmith Item Catalog
+##  Linux Server Configuration
 
-#### Server Info:
+#### Blacksmith Item Catalog
 
 Server IP : 3.219.35.196
 
 Server URL: [http://3.219.35.196.xip.io](http://3.219.35.196.xip.io)
-
-GitHub Repository : [https://github.com/Scifideity/BlacksmithCatalog.git](https://github.com/Scifideity/BlacksmithCatalog.git) 
 
 Software Utilized:
 
@@ -19,13 +17,11 @@ Software Utilized:
     Gunicorn
     Supervisor
 
-## Server Configuration Steps
-
 ####  Prep on your LOCAL machine
 	Create keys for grader
 	ssh-keygen and call it grader_key
 ---
-#### Browse to [Amazon Lightsail](https://aws.amazon.com/lightsail/?nc2=h_m1) 
+#### Browse to [Amazon Lightsail](https://aws.amazon.com/lightsail/?nc2=h_m1)
 
 #### Create Instance
 
@@ -33,7 +29,7 @@ Sign up for the plan you want, lowest, currently $3.50/mo is sufficient for this
 
 Instance Type: OS Only
 
-OS : Ubuntu 16.04 
+OS : Ubuntu 16.04
 
 Create Instance (May take a few min)
 ---
@@ -53,9 +49,9 @@ Connect via SSH w/ default key (found in Accounts section) for your region
 	grader@ip:/home/ubuntu$ cd /home/grader
 	grader@ip-x.x.x.x:~$ mkdir .ssh
 	grader@ip-x.x.x.x:~$ touch .ssh/authorized_keys
-	grader@ip-x.x.x.x:~$ vi .ssh/authorized_keys 
+	grader@ip-x.x.x.x:~$ vi .ssh/authorized_keys
 	grader@ip-x.x.x.x:~$ chmod 700 .ssh
-	grader@ip-x.x.x.x:~$ chmod 644 .ssh/authorized_keys 
+	grader@ip-x.x.x.x:~$ chmod 644 .ssh/authorized_keys
 	grader@ip-x.x.x.x:~$ ls -la
 	 total 28
 	 drwxr-xr-x 3 grader grader 4096 Jun 25 20:45 .
@@ -70,11 +66,11 @@ Connect via SSH w/ default key (found in Accounts section) for your region
 * Using vim or nano edit .ssh/authroized_keys (I prefer vim)
 
 		vi .ssh/authorized_keys
-        
+
         Paste contents of grader_key.pub from your LOCAL Machine
-        
+
         :wq   (Save and Exit. For nano its CTRL-X, Y, <ENTER>)
-        
+
 * Grant ‘grader’ sudo access
 	```
     ~$ sudo ls /etc/sudoers.d  <-- Find exiting username to copy
@@ -83,7 +79,7 @@ Connect via SSH w/ default key (found in Accounts section) for your region
 	~$ sudo ls /etc/sudoers.d
 	90-cloud-init-users  grader  README
 	~$ sudo vi /etc/sudoers.d/grader
-	
+
 	sudo ls /etc/sudoers.d  <— find existing user to copy (
 	sudo cp /etc/sudoers.d/<username-from-previous-step> /etc/sudoers.d/grader
 	sudo vi /etc/sudoers.d/grader
@@ -116,10 +112,10 @@ Connect via SSH w/ default key (found in Accounts section) for your region
  	```
 	grader@ip-x.x.x.x:~$ sudo services sshd restart
 	```
-    
+
 * Close SSH session and reconnect on port 2200
-	* If successful 
- 		- Edit /etc/ssh/sshd_config 
+	* If successful
+ 		- Edit /etc/ssh/sshd_config
  		- Remove ‘Port 22’
  		- Save and restart sshd again
 	* If unsuccessful
@@ -138,9 +134,9 @@ Connect via SSH w/ default key (found in Accounts section) for your region
     ```
 * Get Application onto the server (git shown but you can FTP, SCP, or SFTP if you wish)
  	- Install git
- 	
+
  			sudo apt-get install git
-            
+
  	- Configure git
  		* Configure Git :  [Source](https://www.liquidweb.com/kb/create-clone-repo-github-ubuntu-18-04/)
 		* Set git global 'user.name' and 'user.email'
@@ -153,11 +149,11 @@ Connect via SSH w/ default key (found in Accounts section) for your region
             cd $HOME
             mkdir blacksmithcatalog
             ```
-            
+
      * Clone the project to the blacksmithcatalog directory using the github repository url
-         	
+
             git clone https://github.com/Scifideity/BlacksmithCatalog.git blacksmithcatalog
-            
+
 * Create the Virtual Environment
  	- Install Python3 and Virtual Environment
  	 	```
@@ -169,8 +165,8 @@ Connect via SSH w/ default key (found in Accounts section) for your region
     	python3 -m venv blacksmithcatalog/venv
         ```
 * Activate the Virtual Environment (venv)
-    	
-    	cd blacksmithcatalog 
+
+    	cd blacksmithcatalog
      	source venv /bin/activate
 
 NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
@@ -178,22 +174,22 @@ NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
 	  Prompt will be prefaced with (venv)
 
 * Install Flask Application dependancies
- 		
+
         pip install -r requirements.txt
-        
+
 * Install nginx (webserver to serve static files) and gunicorn (WSGI to handle python code)
-		
+
         cd $HOME
         sudo apt install nginx
-        sudo apt install gunicorn
-        
+        pip install gunicorn
+
 * Configure nginx
 
         sudo rm /etc/nginx/sites-enabled/default
         sudo vi /etc/nginx/sites-enabled/blacksmithcatalog
-        
+
         Add the following:
-        
+
             server {
  			       listen 80;
         			server_name 3.219.35.196;
@@ -208,27 +204,27 @@ NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
             			proxy_redirect off;
         			}
 			}
-            
+
         :wq (Save and Exit)
-        
-* Restart Nginx server 
+
+* Restart Nginx server
 
 		sudo systemctl restart nginx
-        
+
 * Configure Gunicorn
-		
-        gunicorn -w 3 application:app 
-        
+
+        gunicorn -w 3 application:app
+
 * Install Supervisor (Monitors and restarts app)
-		
+
         sudo apt install supervisor
-        
+
 * Configure Supervisor
 
 		sudo vi /etc/supervisor/conf.d/blacksmithing.conf
-        
+
         Add the following:
-        
+
         	[program:blacksmithcatalog]
 			directory=/home/ubuntu/blacksmithcatalog
 			command=/home/ubuntu/blacksmithcatalog/venv/bin/gunicorn -w 3 application:app
@@ -240,9 +236,9 @@ NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
 			stderr_logfile=/var/log/blacksmithcatalog/blacksmithcatalog.err.log
 			stdout_logfile=/var/log/blacksmithcatalog/blacksmithcatalog.out.log
         :wq
-			
+
 * Make the log directory and files
-        
+
         	sudo mkdir /var/log
         	sudo touch /var/log/blacksmithcatalog/blacksmithcatalog.err.log
             sudo touch /var/log/blacksmithcatalog/blacksmithcatalog.out.log
@@ -250,17 +246,15 @@ NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
 * Restart Supervisor
 
 		sudo supervisorctl reload
-        
-#### Site will be available at : http://3.219.35.196.xip.io 
 
-       
+#### Site will be available at : http://3.219.35.196.xip.io
+
+
 
 ---
 Third Party Sites Referenced:
 * [Amazon Lightsail](https://aws.amazon.com/lightsail/?nc2=h_m1)
-* [xip.io](http://xip.io)
 * [ubuntu help](https://help.ubuntu.com/)
 * [Corey Schafer's Tutorials](http://coreyms.com/)
 * [Git Setup](https://www.liquidweb.com/kb/create-clone-repo-github-ubuntu-18-04/)
 * [GitHub](http://www.github.com)
-* [Markdown Editor](https://jbt.github.io/markdown-editor/)  
