@@ -211,9 +211,11 @@ NOTE: ENSURE YOU ARE IN THE (venv) FROM THIS POINT ON
 
 		sudo systemctl restart nginx
 
-* Configure Gunicorn
+* OPTIONAL TEST: Run gunicorn to test
 
         gunicorn -w 3 application:app
+        browse to public IP to test site
+        CTRL-C to exit
 
 * Install Supervisor (Monitors and restarts app)
 
