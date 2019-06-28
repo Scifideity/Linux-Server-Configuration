@@ -44,13 +44,15 @@ Connect via SSH w/ default key (found in Accounts section) for your region
 
 * Update and Upgrade the Server
 
-		sudo apt-get update
-    	sudo apt-get upgrade
+	```sudo apt-get update```
+    
+    ```sudo apt-get upgrade```
 
-* Configure Server for Unattended Upgrades
+* Configure Server for [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates)
 
-		sudo apt-get install unattended-upgrades
-		sudo dpkg-reconfigure unattended-upgrades (interactive, answer Yes)
+	```sudo apt-get install unattended-upgrades```
+    
+	```sudo dpkg-reconfigure unattended-upgrades``` (interactive, answer Yes)
 
 * Create user grader (pw = graderpw) and install key from Local Machine
 	```
@@ -98,9 +100,9 @@ Connect via SSH w/ default key (found in Accounts section) for your region
         :wq!
 	```
 * Test grader ssh access using key
-	```
-    ssh -i grader_key grader@<server-ip>
-	```
+	
+    ```ssh -i grader_key grader@<server-ip>```
+    
 * Test grader sudo permissions
 	```
     Last login: Tue Jun 25 20:51:48 2019 from x.x.x.x
@@ -118,11 +120,11 @@ Connect via SSH w/ default key (found in Accounts section) for your region
 		Confirm PermitRootLogin is no or prohibit-password(new default)
 		:wq
     grader@ip-x.x.x.x:~$
-
-* Restart sshd
- 	```
-	grader@ip-x.x.x.x:~$ sudo services sshd restart
 	```
+    
+* Restart sshd
+ 	
+    ```grader@ip-x.x.x.x:~$ sudo services sshd restart```
     
 * Close SSH session and reconnect on port 2200
 	* If successful 
